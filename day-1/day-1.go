@@ -16,7 +16,10 @@ func round(input float64) int {
 }
 
 func retrieveInput() []string {
-	data, _ := ioutil.ReadFile("./day-1-input.txt")
+	data, err := ioutil.ReadFile("./day-1-input.txt")
+	if err != nil {
+		fmt.Printf("Err: %v", err)
+	}
 	return strings.Split(strings.Replace(string(data), " ", "", -1), ",")
 }
 
@@ -35,6 +38,8 @@ func main() {
 	currentDirection := math.Pi / 2
 	x, y := 0, 0
 
+	// visitIndex := 1
+	seen[Point{0, 0}] = true
 	for _, val := range input {
 		direction := val[0]
 		steps, _ := strconv.Atoi(val[1:])
@@ -50,16 +55,38 @@ func main() {
 
 		x += round(float64(steps) * math.Cos(currentDirection))
 		y += round(float64(steps) * math.Sin(currentDirection))
-		a := math.Copysign(1, x)
 
-		for i = oldX + 1; i <= int(math.Abs(float64(x))); i + 1 {
+		xDiff := x - oldX
+		yDiff := y - oldY
 
+		if xDiff != 0 {
+			a := int(math.Copysign(1, float64(xDiff)))
+			for i := oldX + a; i != x; i += a {
+				if seen[Point{i, y}] {
+					fmt.Printf("Revisited point: (%v, %v) at a distance of %v\n", i, y, absoluteDistance(i, y))
+				}
+				seen[Point{i, y}] = true
+			}
+			if seen[Point{x, y}] {
+				fmt.Printf("Revisited point: (%v, %v) at a distance of %v\n", x, y, absoluteDistance(x, y))
+			}
+			seen[Point{x, y}] = true
 		}
 
-		if seen[Point{x, y}] {
-			fmt.Printf("Revisited point: (%v, %v) at a distance of %v\n", x, y, absoluteDistance(x, y))
+		if yDiff != 0 {
+			a := int(math.Copysign(1, float64(yDiff)))
+			for i := oldY + a; i != y; i += a {
+				if seen[Point{x, i}] {
+					fmt.Printf("Revisited point: (%v, %v) at a distance of %v\n", x, i, absoluteDistance(x, i))
+				}
+				seen[Point{x, i}] = true
+			}
+			if seen[Point{x, y}] {
+				fmt.Printf("Revisited point: (%v, %v) at a distance of %v\n", x, y, absoluteDistance(x, y))
+			}
+			seen[Point{x, y}] = true
 		}
-		seen[Point{x, y}] = true
+
 	}
 
 	fmt.Println(absoluteDistance(x, y))
