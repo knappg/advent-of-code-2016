@@ -35,7 +35,7 @@ func main() {
 	input := util.RetrieveInput("./day-4-input.txt")
 
 	// (\w+-)+(\d+)\[(\w+)\]
-	lineRegex := regexp.MustCompile("([\\w-]+)-(\\d+)\\[(\\w+)\\]")
+	lineRegex := regexp.MustCompile(`([\w-]+)-(\d+)\[(\w+)\]`)
 
 	sum := 0
 	for _, val := range input {
