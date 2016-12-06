@@ -31,20 +31,40 @@ func isValidLine(matches []string) bool {
 	return true
 }
 
+const ASCII_A = 97
+const ALPHABET_LENGTH = 26
+
+// Prints out a line after shifting
+func shiftLine(matches []string) {
+	// The concept is pretty straightforward
+	sector, _ := strconv.Atoi(matches[1])
+
+	for _, val := range matches[0] {
+		if string(val) == "-" {
+			fmt.Print(" ")
+		} else {
+			shiftedAlphabetIndex := (int(val) - ASCII_A + sector) % ALPHABET_LENGTH
+			fmt.Print(string(shiftedAlphabetIndex + ASCII_A))
+		}
+	}
+	fmt.Printf(" - %v\n", sector)
+}
+
 func main() {
 	input := util.RetrieveInput("./day-4-input.txt")
 
 	// (\w+-)+(\d+)\[(\w+)\]
 	lineRegex := regexp.MustCompile(`([\w-]+)-(\d+)\[(\w+)\]`)
 
-	sum := 0
+	// sum := 0
 	for _, val := range input {
 		matches := lineRegex.FindAllStringSubmatch(val, -1)[0][1:]
-		if isValidLine(matches) {
-			val, _ := strconv.Atoi(matches[1])
+		// if isValidLine(matches) {
+			// val, _ := strconv.Atoi(matches[1])
 			// fmt.Printf("Valid line, with id: %v\n", val)
-			sum += val
-		}
+			// sum += val
+		// }
+		shiftLine(matches)
 	}
-	fmt.Println(sum)
+	// fmt.Println(sum)
 }
